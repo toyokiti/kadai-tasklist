@@ -15,13 +15,19 @@ class TasksController extends Controller
      */
     public function index()
     {
-        $tasks = Task::all();
+        // ■ログイン状態を確認
+        //  ログインしていたらindex.blade.phpへリダイレクト
+        //  未ログインならwelcome.blade.phpへリダイレクト
         
-        return view('tasks.index', 
-        [ 
-             'tasks' => $tasks,
-        ]);
+        // ログインしているか確認
+        if(\Auth::check()) {
+            // ログインしているユーザーのidを取得
+            $user = \Auth::user();
+            $tasks = $user->tasks()->orderBy('id', 'asc')->paginate(10);
+            return view('tasks.index', [ 'tasks' => $tasks ]);
+        }
         
+        return view('welcome');
     }
 
     /**
