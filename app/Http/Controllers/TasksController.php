@@ -21,7 +21,7 @@ class TasksController extends Controller
         
         // ログインしているか確認
         if(\Auth::check()) {
-            // ログインしているユーザーのidを取得
+            // ログインしているユーザーを取得
             $user = \Auth::user();
             $tasks = $user->tasks()->orderBy('id', 'asc')->paginate(10);
             return view('tasks.index', [ 'tasks' => $tasks ]);
@@ -61,6 +61,8 @@ class TasksController extends Controller
         
         //
         $task = new Task;
+        // \Auth::id()でログインしているユーザーのidを取得
+        $task->user_id = \Auth::id();
         $task->status = $request->status;
         $task->content = $request->content;
         $task->save();
@@ -96,9 +98,14 @@ class TasksController extends Controller
         //
         $task = Task::find($id);
         
+        if(\Auth::id() === $task->user_id){
         return view('tasks.edit', [
             'task' => $task,
             ]);
+        }
+        
+         return back();
+        
     }
 
     /**
@@ -116,11 +123,14 @@ class TasksController extends Controller
             ]);
         
         $task = Task::find($id);
+        
+        if(\Auth::id() === $task->user_id ) {
         $task->status = $request->status;
         $task->content = $request->content;
         $task->save();
+        }
 
-        return redirect('/');
+        return back();
     }
 
     /**
@@ -131,9 +141,12 @@ class TasksController extends Controller
      */
     public function destroy($id)
     {
-        $task = Task::find($id);
+      $task = Task::find($id);
+     
+      if(\Auth::id() === $task->user_id ) {
         $task->delete();
+      }
         
-        return redirect('/');
+        return back();
     }
 }

@@ -12,11 +12,16 @@
        </tr>
        @foreach ($tasks as $task)
        <tr>
-           <td class='text-center'>{!! $task->id !!}</td>
+           <!--<td class='text-center'>{!! $task->id !!}</td>-->
+           <td>{!! link_to_route('tasks.show', $task->id, [ 'id' => $task->id ] ) !!} </td>
            <td class='text-center'>{!! $task->status !!}</td>
            <td class='text-center'>{!! $task->content !!}</td>
        </tr>
-       @endforeach
+       @endforeach 
    </table>
+   
+   <div class="mt-2">
+        {!! link_to_route('tasks.create', 'NewTask!!', null, ['class' => 'btn btn-primary']) !!}
+   </div>   
 
 @endsection
